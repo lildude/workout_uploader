@@ -15,3 +15,5 @@ Push to your fork and [submit a pull request][pr].
 At this point you're waiting on me. I like to at least comment on pull requests
 within three business days (and, typically, one business day). I may suggest
 some changes or improvements or alternatives.
+
+Please ensure you adhere to the [Ruby style guide](https://github.com/styleguide/ruby).
