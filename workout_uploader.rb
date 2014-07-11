@@ -71,7 +71,11 @@ def upload_file(activity)
       )
 
       if upload.code < 400
-        log "Success! Upload ID: #{upload["upload_id"]}"
+        if upload["activity_id"]
+          log "Success! Upload ID: #{upload["activity_id"]}"
+        else
+          log "Success! Though Strava says: #{upload["status"]}"
+        end
         @upload_count = @upload_count + 1
       elsif upload.code == 400
         log upload["error"], 'warn'
