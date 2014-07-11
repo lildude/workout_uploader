@@ -1,0 +1,29 @@
+# Optional: Set if you'd like a log file
+log_file:
+
+# Required: Directory to watch for new files.
+# Uncomment, and modify as appropriate
+
+# Garmin ANT+ Agent:
+#watch_path: /Users/[USERNAME]/Library/Application Support/Garmin/Devices/[DEVICE_ID]/History/
+#fileType: TCX
+
+# Garmin Express > 3.0 with ANT+:
+#watch_path: /Users/[USERNAME]/Library/Application Support/Garmin/GarminConnect/[DEVICE_ID]/Upload/FIT_TYPE_4
+#fileType: FIT
+
+# Garmin Forerunner 110 and other devices can be accessed directly from the device
+#watch_path: /Volumes/GARMIN/Garmin/Activities
+#fileType: FIT
+
+# Enable the plugins you wish to use.
+plugins:
+  strava:
+    enabled: false
+    token:
+  fetcheveryone:
+    enabled: false
+    email:
+    password:
+  dailymile:
+    enabled: false
