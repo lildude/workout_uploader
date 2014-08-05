@@ -9,8 +9,8 @@ log_file:
 #fileType: TCX
 
 # Garmin Express > 3.0 with ANT+:
-#watch_path: /Users/[USERNAME]/Library/Application Support/Garmin/Express/RegisteredDevices/[DEVICE_ID]/Upload/FIT_TYPE_4
-#fileType: FIT
+#watch_path: /Users/[USERNAME]/Library/Application Support/Garmin/GarminConnect/-[DEVICE_ID]/Upload/FitnessHistory
+#fileType: FIT|TCX
 
 # Garmin Forerunner 110 and other devices can be accessed directly from the device
 #watch_path: /Volumes/GARMIN/Garmin/Activities
