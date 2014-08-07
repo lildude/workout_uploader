@@ -1,7 +1,9 @@
 ActivityUploader
 ================
 
-Automatically upload exercise activity files downloaded to your Mac by your activity monitor like Garmin Forerunner or Suunto watch to websites like Strava, TrainingPeaks and FetchEveryone. 
+**STATUS: WIP - not sure this will ever be finished, but we'll see :wink: ***
+
+Automatically upload exercise activity files downloaded to your Mac by your activity monitor like Garmin Forerunner or Suunto watch to websites like Strava, TrainingPeaks and FetchEveryone.
 Motivation
 ----------
 
