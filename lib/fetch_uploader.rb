@@ -8,6 +8,7 @@ require "bundler/setup"
 require "mechanize"
 require "time"
 require "yaml"
+require "logger"
 
 CONFIG = YAML.load_file("config.yml") unless defined? CONFIG
 
@@ -16,12 +17,13 @@ CONFIG = YAML.load_file("config.yml") unless defined? CONFIG
 
 def log(message, severity = "info")
   if CONFIG["log_file"]
-    require "logger"
     logger = Logger.new(CONFIG["log_file"])
-    logger.progname = "workout_uploader"
-    logger.send(:"#{severity}", "#{message}")
-    logger.close
+  else
+    logger = Logger.new(STDOUT)
   end
+  logger.progname = "workout_uploader"
+  logger.send(:"#{severity}", "#{message}")
+  logger.close if CONFIG["log_file"]
 end
 
 def startup()
@@ -43,11 +45,16 @@ def startup()
     files = Dir.glob("#{CONFIG['watch_path']}/*.#{CONFIG['file_type']}", File::FNM_CASEFOLD)
   end
 
-  sign_in()
-  return
   @activity_count = files.length
-  files.each { |f| upload_file(f) }
 
+  if @activity_count > 0
+    # Sign in to FetchEveryone
+    fe = sign_in()
+    # Upload
+    files.each { |f| upload_file(f, fe) }
+  end
+
+  # Update tracker file
   if @activity_count == 0
     log "No activities to sync"
   elsif @upload_count == @activity_count
@@ -65,52 +72,36 @@ end
 def sign_in()
   fe = Mechanize.new
   fe.user_agent_alias = 'Mac Safari' # Other agents are visible with puts Mechanize::AGENT_ALIASES
-  f = fe.get('http://www.fetcheveryone.com/index.php') do |page|
+  fe.get('http://www.fetcheveryone.com/index.php') do |page|
     log "Signing in to FetchEveryone..."
-    mp = page.form_with(:action => "dologin.php") do |f|
+    page.form_with(:action => "dologin.php") do |f|
       f.email = CONFIG['plugins']['fetcheveryone']['email']
       f.password = CONFIG['plugins']['fetcheveryone']['password']
     end.submit
-
-    puts mp.body
   end
+  fe
 end
 
-def upload_file(activity)
+def upload_file(activity, fe)
+  log "Syncing Activity - #{File.basename(activity)} to FetchEveryone"
+  begin
+    # Load the upload page
+    upload_page = fe.get('http://www.fetcheveryone.com/training-import-tcx.php')
 
-    log "Syncing Activity - #{File.basename(activity)} to FetchEveryone"
+    # Upload the file
+    upload_page.forms()[2].file_upload_with(:name => /tcxfile/).file_name = activity
+    upload_page.forms()[2].category = "R"
+    up = upload_page.forms()[2].submit
 
-
-
-=begin
-    params = { :data_type => "#{CONFIG['file_type']}".downcase, :file => File.open("#{activity}", 'r') }
-
-    begin
-      upload = HTTMultiParty.post(
-        "https://www.strava.com/api/v3/uploads",
-        body: params,
-        headers: { "Authorization" => "Bearer #{CONFIG['plugins']['strava']['token']}" }
-      )
-
-      if upload.code < 400
-        if upload["activity_id"]
-          log "Success! Upload ID: #{upload["activity_id"]}"
-        else
-          log "Success! Though Strava says: #{upload["status"]}"
-        end
-        @upload_count = @upload_count + 1
-      elsif upload.code == 400
-        log upload["error"], 'warn'
-        @upload_count = @upload_count + 1
-      else
-        log "Uh oh, something went wrong uploading the activity: #{upload["message"]}", "error"
-        log "=> Errors: #{upload["errors"]}", "error"
-      end
-
-    rescue Exception => e
-        log "Uh oh, something went wrong uploading the activity: #{e.message}", "fatal"
+    if up.code == "200"
+      log "Success!"
+      @upload_count = @upload_count + 1
+    else
+      log "Uh oh, something went wrong uploading the activity"
     end
-=end
+  rescue Exception => e
+    log "Uh oh, something went wrong uploading the activity: #{e.message}", "fatal"
+  end
 end
 
 startup()
