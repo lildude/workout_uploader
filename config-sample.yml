@@ -6,15 +6,15 @@ log_file:
 
 # Garmin ANT+ Agent:
 #watch_path: /Users/[USERNAME]/Library/Application Support/Garmin/Devices/[DEVICE_ID]/History/
-#fileType: TCX
+#file_type: TCX
 
 # Garmin Express > 3.0 with ANT+:
-#watch_path: /Users/[USERNAME]/Library/Application Support/Garmin/GarminConnect/-[DEVICE_ID]/Upload/FitnessHistory
-#fileType: FIT|TCX
+#watch_path: /Users/[USERNAME]/Library/Application Support/Garmin/GarminConnect/[DEVICE_ID]/Upload/FitnessHistory
+#file_type: FIT|TCX
 
 # Garmin Forerunner 110 and other devices can be accessed directly from the device
 #watch_path: /Volumes/GARMIN/Garmin/Activities
-#fileType: FIT
+#file_type: FIT
 
 # Enable the plugins you wish to use.
 plugins:
