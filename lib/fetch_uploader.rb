@@ -37,14 +37,14 @@ def startup()
   end
 
   if last_upload_time.is_a?(Time)
-    puts "Here"
     files = Dir.glob("#{CONFIG['watch_path']}/*.#{CONFIG['file_type']}", File::FNM_CASEFOLD).
       select{ |f| File.mtime(f) > last_upload_time }
   else
     files = Dir.glob("#{CONFIG['watch_path']}/*.#{CONFIG['file_type']}", File::FNM_CASEFOLD)
-    puts files
   end
 
+  sign_in()
+  return
   @activity_count = files.length
   files.each { |f| upload_file(f) }
 
@@ -62,21 +62,26 @@ def startup()
   dot_tkr.close
 end
 
+def sign_in()
+  fe = Mechanize.new
+  fe.user_agent_alias = 'Mac Safari' # Other agents are visible with puts Mechanize::AGENT_ALIASES
+  f = fe.get('http://www.fetcheveryone.com/index.php') do |page|
+    log "Signing in to FetchEveryone..."
+    mp = page.form_with(:action => "dologin.php") do |f|
+      f.email = CONFIG['plugins']['fetcheveryone']['email']
+      f.password = CONFIG['plugins']['fetcheveryone']['password']
+    end.submit
+
+    puts mp.body
+  end
+end
+
 def upload_file(activity)
 
     log "Syncing Activity - #{File.basename(activity)} to FetchEveryone"
 
 
-    fe = Mechanize.new
-    fe.get('http://www.fetcheveryone.com/') do |page|
-      log "Signing in to FetchEveryone..."
-      mp = page.form_with(:action => "dologin.php") do |f|
-        f.email = CONFIG['plugins']['fetcheveryone']['email']
-        f.password = CONFIG['plugins']['fetcheveryone']['password']
-      end.submit
 
-      puts mp
-    end
 =begin
     params = { :data_type => "#{CONFIG['file_type']}".downcase, :file => File.open("#{activity}", 'r') }
 
