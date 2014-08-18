@@ -94,7 +94,7 @@ def upload_file(activity, fe)
     up = upload_page.forms()[2].submit
 
     if up.code == "200"
-      log "Success!"
+      log "Success! #{up.uri}"
       @upload_count = @upload_count + 1
     else
       log "Uh oh, something went wrong uploading the activity"
