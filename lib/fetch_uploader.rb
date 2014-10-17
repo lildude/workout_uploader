@@ -89,15 +89,15 @@ def upload_file(activity, fe)
     upload_page = fe.get('http://www.fetcheveryone.com/training-import-tcx.php')
 
     # Upload the file
-    upload_page.forms()[2].file_upload_with(:name => /tcxfile/).file_name = activity
-    upload_page.forms()[2].category = "R"
-    up = upload_page.forms()[2].submit
+    upload_page.forms()[1].file_upload_with(:name => /tcxfile/).file_name = activity
+    upload_page.forms()[1].category = "R"
+    up = upload_page.forms()[1].submit
 
     if up.code == "200"
       log "Success! #{up.uri}"
       @upload_count = @upload_count + 1
     else
-      log "Uh oh, something went wrong uploading the activity"
+      log "Uh oh, something went wrong uploading the activity: #{up.code}"
     end
   rescue Exception => e
     log "Uh oh, something went wrong uploading the activity: #{e.message}", "fatal"
